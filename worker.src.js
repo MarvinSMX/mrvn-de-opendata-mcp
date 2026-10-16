@@ -55,7 +55,7 @@ async function callTool(name, args, key) {
   return { result: { content: [{ type: 'text', text }], isError: !r.ok } };
 }
 
-async function handleRpc(msg, key) {
+async function handleRpc(msg, key, ctx) {
   const { id, method, params } = msg || {};
   const isNotification = id === undefined || id === null;
   const ok = (result) => ({ jsonrpc: '2.0', id, result });
@@ -75,6 +75,7 @@ async function handleRpc(msg, key) {
     case 'ping': return ok({});
     case 'tools/list': return ok({ tools: TOOLS.map(({ _route, ...t }) => t) });
     case 'tools/call': {
+      if (ctx) countCall(ctx, params?.name);
       const r = await callTool(params?.name, params?.arguments, key);
       return r.error ? err(r.error.code, r.error.message) : ok(r.result);
     }
@@ -107,8 +108,43 @@ const LANDING = `<!doctype html><html lang="en"><head><meta charset="utf-8"><met
 <p>Transport: Streamable HTTP (stateless, JSON responses) at <code>/mcp</code>. Your key is forwarded only to the RapidAPI gateway and never stored.</p>
 </body></html>`;
 
+// Privacy-safe usage counter (MRVN). One tools/call = one KV key "e:<UTC YYYY-MM-DD>:<tool>:<random id>" with an empty value.
+// Stores ONLY that a named tool was called on a UTC day: no IPs, keys, user agents or arguments. The random id exists only so
+// concurrent calls never overwrite each other (no read-modify-write, no lost counts). Fire-and-forget via waitUntil, errors swallowed.
+// Unknown tool names are bucketed as "_unknown". Keys expire after 400 days.
+const TOOL_NAMES = new Set(TOOLS.map((t) => t.name));
+function countCall({ env, waitUntil }, name) {
+  try {
+    const kv = env?.MRVN_MCP_STATS; if (!kv) return;
+    const tool = TOOL_NAMES.has(name) ? name : '_unknown';
+    const k = `e:${new Date().toISOString().slice(0, 10)}:${tool}:${crypto.randomUUID()}`;
+    waitUntil(kv.put(k, '', { expirationTtl: 400 * 86400 }).catch(() => {}));
+  } catch {}
+}
+function safeEq(a, b) { if (typeof a !== 'string' || typeof b !== 'string' || a.length !== b.length) return false; let r = 0; for (let i = 0; i < a.length; i++) r |= a.charCodeAt(i) ^ b.charCodeAt(i); return r === 0; }
+async function stats(req, url, env) {
+  const tok = (req.headers.get('authorization') || '').replace(/^Bearer\s+/i, '');
+  if (!env?.STATS_TOKEN || !safeEq(tok, env.STATS_TOKEN)) return json({ error: 'unauthorized' }, 401);
+  const kv = env.MRVN_MCP_STATS; if (!kv) return json({ error: 'no_store' }, 503);
+  const days = Math.min(Math.max(parseInt(url.searchParams.get('days') || '7', 10) || 7, 1), 31);
+  const out = [];
+  for (let i = 0; i < days; i++) {
+    const day = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+    const d = { day, total: 0, tools: {} };
+    let cursor;
+    do {
+      const r = await kv.list({ prefix: `e:${day}:`, cursor });
+      for (const { name } of r.keys) { const t = name.split(':')[2]; d.total++; d.tools[t] = (d.tools[t] || 0) + 1; }
+      cursor = r.list_complete ? undefined : r.cursor;
+    } while (cursor);
+    out.push(d);
+  }
+  return json({ timezone: 'UTC', days: out });
+}
+
 export default {
-  async fetch(req) {
+  async fetch(req, env, execCtx) {
+    const ctx = { env, waitUntil: (p) => { try { execCtx?.waitUntil(p); } catch {} } };
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     if (url.pathname === '/' || url.pathname === '/index.html') {
@@ -118,6 +154,7 @@ export default {
     if (url.pathname === '/.well-known/mcp.json' || url.pathname === '/server.json') {
       return json({ name: SERVER.name, version: SERVER.version, transport: 'streamable-http', url: `${url.origin}/mcp`, auth: { type: 'header', header: 'X-RapidAPI-Key' }, tools: TOOLS.map((t) => t.name) });
     }
+    if (url.pathname === '/stats') return stats(req, url, env);
     if (url.pathname !== '/mcp') return json({ error: 'not_found' }, 404);
     if (req.method === 'GET') return new Response('SSE stream not supported; use POST', { status: 405, headers: { Allow: 'POST', ...CORS } });
     if (req.method === 'DELETE') return new Response(null, { status: 204, headers: CORS });
@@ -126,10 +163,10 @@ export default {
     try { body = await req.json(); } catch { return json({ jsonrpc: '2.0', id: null, error: { code: -32700, message: 'Parse error' } }, 400); }
     const key = apiKey(req);
     if (Array.isArray(body)) {
-      const out = (await Promise.all(body.map((m) => handleRpc(m, key)))).filter(Boolean);
+      const out = (await Promise.all(body.map((m) => handleRpc(m, key, ctx)))).filter(Boolean);
       return out.length ? json(out) : new Response(null, { status: 202, headers: CORS });
     }
-    const res = await handleRpc(body, key);
+    const res = await handleRpc(body, key, ctx);
     return res ? json(res) : new Response(null, { status: 202, headers: CORS });
   },
 };

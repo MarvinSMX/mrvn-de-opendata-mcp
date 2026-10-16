@@ -65,3 +65,7 @@ The three backing REST APIs are described in `openapi/` (OpenAPI 3.0.3, server =
 [tender]: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
 [mastr]: https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units
 [ladesaeulen]: https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query
+
+## Privacy
+
+The server keeps an anonymous per-tool call counter: one count per `tools/call` per tool name per UTC day (Workers KV). No IPs, API keys, user agents or arguments are stored. Your RapidAPI key is only forwarded to the RapidAPI gateway.
