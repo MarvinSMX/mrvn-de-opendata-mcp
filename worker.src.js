@@ -92,7 +92,7 @@ const LANDING = `<!doctype html><html lang="en"><head><meta charset="utf-8"><met
 <ul><li><b>Public procurement notices</b> from oeffentlichevergabe.de (CC0): filter by keyword, CPV, Bundesland, value, deadline.</li>
 <li><b>MaStR energy units</b> from the Marktstammdatenregister (DL-DE-BY-2.0, © Bundesnetzagentur): solar, wind, storage and more by PLZ, type, capacity.</li></ul>
 <h2>Install</h2>
-<p>1. Get a RapidAPI key and subscribe (free BASIC plan, 100 requests/day) to <a href="https://rapidapi.com/MarvinGaming/api/de-tender-query">DE Tender Query</a> and/or <a href="https://rapidapi.com/MarvinGaming/api/de-mastr-units">DE MaStR Units</a>.</p>
+<p>1. Get a RapidAPI key and subscribe (free BASIC plan, 100 requests/day) to <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query">DE Tender Query</a> and/or <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units">DE MaStR Units</a>.</p>
 <p>2. Add to your MCP config (Cursor <code>~/.cursor/mcp.json</code>, Claude Desktop, etc.):</p>
 <pre>{
   "mcpServers": {

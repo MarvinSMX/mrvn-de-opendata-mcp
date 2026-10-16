@@ -10,7 +10,7 @@ r = await rpc({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolV
 let j = await r.json(); ck('initialize', j.result?.protocolVersion === '2025-03-26' && j.result.serverInfo.name === 'de-opendata-mcp');
 r = await rpc({ jsonrpc: '2.0', method: 'notifications/initialized' }); ck('notification 202', r.status === 202);
 r = await rpc({ jsonrpc: '2.0', id: 2, method: 'tools/list' }); j = await r.json(); ck('tools/list 8, no _route', j.result.tools.length === 8 && !JSON.stringify(j).includes('_route'));
-r = await rpc({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'tender_health', arguments: {} } }); j = await r.json(); ck('no key -> hint', j.result.isError && j.result.content[0].text.includes('rapidapi.com/MarvinGaming/api/de-tender-query'));
+r = await rpc({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'tender_health', arguments: {} } }); j = await r.json(); ck('no key -> hint', j.result.isError && j.result.content[0].text.includes('rapidapi.com/mrvn-mrvn-default/api/de-tender-query'));
 r = await rpc({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'mastr_search_units', arguments: { plz: '10', limit: 1 } } }, 'invalid-key'); j = await r.json(); ck('bad key -> rapidapi reject', j.result.isError && /rejected the key \(40[13]\)/.test(j.result.content[0].text));
 r = await rpc({ jsonrpc: '2.0', id: 5, method: 'tools/call', params: { name: 'nope' } }); j = await r.json(); ck('unknown tool', j.error?.code === -32602);
 r = await rpc({ jsonrpc: '2.0', id: 6, method: 'foo' }); j = await r.json(); ck('unknown method', j.error?.code === -32601);

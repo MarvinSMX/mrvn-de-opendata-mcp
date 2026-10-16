@@ -50,5 +50,5 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 - MaStR data: © Bundesnetzagentur, Marktstammdatenregister, Datenlizenz Deutschland – Namensnennung – Version 2.0 (dl-de/by-2-0), www.marktstammdatenregister.de. Data may be processed/filtered; no affiliation with or endorsement by the publishers.
 
 <!-- RapidAPI listing URLs: single place to update in this README (also build-tools.mjs, worker.src.js, smoke.mjs) -->
-[tender]: https://rapidapi.com/MarvinGaming/api/de-tender-query
-[mastr]: https://rapidapi.com/MarvinGaming/api/de-mastr-units
+[tender]: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
+[mastr]: https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units

@@ -1,8 +1,8 @@
 // Builds tools array for the MCP worker from E2 tools.json files.
 import fs from 'node:fs';
 const src = [
-  ['tender', '../e2-apis/de-tender-query/mcp/tools.json', 'de-tender-query.p.rapidapi.com', 'https://rapidapi.com/MarvinGaming/api/de-tender-query'],
-  ['mastr', '../e2-apis/de-mastr-units/mcp/tools.json', 'de-mastr-units.p.rapidapi.com', 'https://rapidapi.com/MarvinGaming/api/de-mastr-units'],
+  ['tender', '../e2-apis/de-tender-query/mcp/tools.json', 'de-tender-query.p.rapidapi.com', 'https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query'],
+  ['mastr', '../e2-apis/de-mastr-units/mcp/tools.json', 'de-mastr-units.p.rapidapi.com', 'https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units'],
 ];
 const tools = [];
 for (const [prefix, file, host, hub] of src) {

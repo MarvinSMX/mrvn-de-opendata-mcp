@@ -92,7 +92,7 @@
     },
     "_route": {
       "host": "de-tender-query.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-tender-query",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query",
       "path": "/v1/notices"
     }
   },
@@ -113,7 +113,7 @@
     },
     "_route": {
       "host": "de-tender-query.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-tender-query",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query",
       "path": "/v1/notices/{id}"
     }
   },
@@ -126,7 +126,7 @@
     },
     "_route": {
       "host": "de-tender-query.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-tender-query",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query",
       "path": "/v1/stats"
     }
   },
@@ -139,7 +139,7 @@
     },
     "_route": {
       "host": "de-tender-query.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-tender-query",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query",
       "path": "/v1/health"
     }
   },
@@ -210,7 +210,7 @@
     },
     "_route": {
       "host": "de-mastr-units.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-mastr-units",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units",
       "path": "/v1/units"
     }
   },
@@ -231,7 +231,7 @@
     },
     "_route": {
       "host": "de-mastr-units.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-mastr-units",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units",
       "path": "/v1/units/{mastr_id}"
     }
   },
@@ -244,7 +244,7 @@
     },
     "_route": {
       "host": "de-mastr-units.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-mastr-units",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units",
       "path": "/v1/stats"
     }
   },
@@ -257,7 +257,7 @@
     },
     "_route": {
       "host": "de-mastr-units.p.rapidapi.com",
-      "hub": "https://rapidapi.com/MarvinGaming/api/de-mastr-units",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units",
       "path": "/v1/health"
     }
   }
