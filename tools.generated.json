@@ -260,5 +260,161 @@
       "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units",
       "path": "/v1/health"
     }
+  },
+  {
+    "name": "ladesaeulen_search_stations",
+    "description": "Search/filter German EV charging stations by PLZ, Bundesland, power (kW), fast/normal, plug type, operator, payment, city, radius around lat/lon, or bounding box. [German EV charging stations (Ladesäulenregister, CC BY 4.0, Bundesnetzagentur.de)]",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "plz": {
+          "type": "string",
+          "description": "PLZ or prefix, e.g. 10115 or 80"
+        },
+        "land": {
+          "type": "string",
+          "description": "Comma-separated Bundesland codes (BW,BY,…)"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "fast",
+            "normal"
+          ]
+        },
+        "min_kw": {
+          "type": "number"
+        },
+        "max_kw": {
+          "type": "number"
+        },
+        "plug": {
+          "type": "string",
+          "description": "Plug type substring: ccs, chademo, typ 2, mcs"
+        },
+        "payment": {
+          "type": "string",
+          "description": "Payment substring, e.g. kreditkarte, plug & charge, kostenlos"
+        },
+        "operator": {
+          "type": "string",
+          "description": "Operator substring, e.g. ionity, tesla, enbw"
+        },
+        "ort": {
+          "type": "string",
+          "description": "City name (prefix match)"
+        },
+        "q": {
+          "type": "string",
+          "description": "Free text over operator, name, city, street, PLZ, Kreis"
+        },
+        "open_24_7": {
+          "type": "boolean"
+        },
+        "commissioned_after": {
+          "type": "string",
+          "format": "date"
+        },
+        "lat": {
+          "type": "number",
+          "description": "Radius search center (with lon)"
+        },
+        "lon": {
+          "type": "number"
+        },
+        "radius_km": {
+          "type": "number",
+          "default": 5,
+          "maximum": 100
+        },
+        "bbox": {
+          "type": "string",
+          "description": "minLon,minLat,maxLon,maxLat"
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "power",
+            "commissioned",
+            "points",
+            "distance"
+          ]
+        },
+        "fields": {
+          "type": "string",
+          "enum": [
+            "compact"
+          ]
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "_route": {
+      "host": "de-ladesaulen-query.p.rapidapi.com",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query",
+      "path": "/v1/stations"
+    }
+  },
+  {
+    "name": "ladesaeulen_get_station",
+    "description": "Get one charging station by Ladeeinrichtungs-ID. [German EV charging stations (Ladesäulenregister, CC BY 4.0, Bundesnetzagentur.de)]",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ladeeinrichtungs-ID"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "_route": {
+      "host": "de-ladesaulen-query.p.rapidapi.com",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query",
+      "path": "/v1/stations/{id}"
+    }
+  },
+  {
+    "name": "ladesaeulen_get_stats",
+    "description": "Aggregates by Bundesland, kW bucket, plug type and top operators. [German EV charging stations (Ladesäulenregister, CC BY 4.0, Bundesnetzagentur.de)]",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "land": {
+          "type": "string",
+          "description": "Optional Bundesland code filter"
+        }
+      }
+    },
+    "_route": {
+      "host": "de-ladesaulen-query.p.rapidapi.com",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query",
+      "path": "/v1/stats"
+    }
+  },
+  {
+    "name": "ladesaeulen_health",
+    "description": "Service status and data freshness (station count, data date, license). [German EV charging stations (Ladesäulenregister, CC BY 4.0, Bundesnetzagentur.de)]",
+    "inputSchema": {
+      "type": "object",
+      "properties": {}
+    },
+    "_route": {
+      "host": "de-ladesaulen-query.p.rapidapi.com",
+      "hub": "https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query",
+      "path": "/v1/health"
+    }
   }
 ]

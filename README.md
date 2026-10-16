@@ -8,10 +8,11 @@ Remote MCP server (Streamable HTTP, stateless) giving AI agents access to German
 
 - **Public procurement notices** from [oeffentlichevergabe.de](https://oeffentlichevergabe.de) – search by keyword, CPV code, Bundesland, value, deadline.
 - **Energy units from the Marktstammdatenregister (MaStR)** of the Bundesnetzagentur – solar, wind, storage etc., by location, technology, capacity.
+- **EV charging stations from the Ladesäulenregister** of the Bundesnetzagentur – by PLZ, Bundesland, power (kW), plug type, operator, radius or bounding box.
 
 Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-opendata-mcp.pages.dev/
 
-## Tools (8)
+## Tools (12)
 | Tool | Purpose |
 |---|---|
 | `tender_search_notices` | Search procurement notices |
@@ -22,10 +23,14 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 | `mastr_get_unit` | Get one unit by MaStR number |
 | `mastr_get_stats` | Aggregate unit stats |
 | `mastr_health` | Data freshness / health |
+| `ladesaeulen_search_stations` | Search EV charging stations |
+| `ladesaeulen_get_station` | Get one station by Ladeeinrichtungs-ID |
+| `ladesaeulen_get_stats` | Aggregate station stats |
+| `ladesaeulen_health` | Data freshness / health |
 
 `tools/list` works without a key. Tool calls require **your own RapidAPI key**, subscribed to
-[DE Tender Query][tender] and/or
-[DE MaStR Units][mastr]. Each has a free BASIC plan (100 requests/day); paid plans exist for higher volume. Your key is forwarded only to the RapidAPI gateway and is not stored.
+[DE Tender Query][tender], [DE MaStR Units][mastr] and/or
+[DE Ladesäulen Query][ladesaeulen]. Each has a free BASIC plan (100 requests/day); paid plans exist for higher volume. Your key is forwarded only to the RapidAPI gateway and is not stored.
 
 ## Config
 ```json
@@ -47,8 +52,10 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 ## License & data attribution
 - Code: MIT (see `LICENSE`).
 - Procurement data: oeffentlichevergabe.de, published under CC0 1.0.
+- EV charging station data: Bundesnetzagentur.de, Ladesäulenregister, CC BY 4.0; reformatted.
 - MaStR data: © Bundesnetzagentur, Marktstammdatenregister, Datenlizenz Deutschland – Namensnennung – Version 2.0 (dl-de/by-2-0), www.marktstammdatenregister.de. Data may be processed/filtered; no affiliation with or endorsement by the publishers.
 
 <!-- RapidAPI listing URLs: single place to update in this README (also build-tools.mjs, worker.src.js, smoke.mjs) -->
 [tender]: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
 [mastr]: https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units
+[ladesaeulen]: https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query

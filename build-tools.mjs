@@ -3,7 +3,9 @@ import fs from 'node:fs';
 const src = [
   ['tender', '../e2-apis/de-tender-query/mcp/tools.json', 'de-tender-query.p.rapidapi.com', 'https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query'],
   ['mastr', '../e2-apis/de-mastr-units/mcp/tools.json', 'de-mastr-units.p.rapidapi.com', 'https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units'],
+  ['ladesaeulen', '../e5-candidate/de-ladesaeulen-query/mcp/tools.json', 'de-ladesaulen-query.p.rapidapi.com', 'https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query'],
 ];
+const ATTR = { tender: 'German public procurement (oeffentlichevergabe.de, CC0)', mastr: 'German MaStR energy units (DL-DE-BY-2.0, © Bundesnetzagentur)', ladesaeulen: 'German EV charging stations (Ladesäulenregister, CC BY 4.0, Bundesnetzagentur.de)' };
 const tools = [];
 for (const [prefix, file, host, hub] of src) {
   const j = JSON.parse(fs.readFileSync(new URL(file, import.meta.url)));
@@ -14,7 +16,7 @@ for (const [prefix, file, host, hub] of src) {
     }
     tools.push({
       name: `${prefix}_${t.name}`,
-      description: `${t.description} [${prefix === 'tender' ? 'German public procurement (oeffentlichevergabe.de, CC0)' : 'German MaStR energy units (DL-DE-BY-2.0, © Bundesnetzagentur)'}]`,
+      description: `${t.description} [${ATTR[prefix]}]`,
       inputSchema: { type: 'object', properties: props, ...(required.length ? { required } : {}) },
       _route: { host, hub, path: t.path },
     });

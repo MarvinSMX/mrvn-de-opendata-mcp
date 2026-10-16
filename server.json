@@ -2,13 +2,13 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.MarvinSMX/mrvn-de-opendata-mcp",
   "title": "MRVN DE Open Data MCP",
-  "description": "MRVN: German public tenders (oeffentlichevergabe.de) and MaStR energy units via your RapidAPI key.",
+  "description": "MRVN: German public tenders, MaStR energy units and EV charging stations via your RapidAPI key.",
   "repository": {
     "url": "https://github.com/MarvinSMX/mrvn-de-opendata-mcp",
     "source": "github"
   },
   "websiteUrl": "https://de-opendata-mcp.pages.dev/",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "remotes": [
     {
       "type": "streamable-http",

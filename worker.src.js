@@ -2,7 +2,7 @@
 // Forwards tool calls to the RapidAPI gateway with the CALLER's own RapidAPI key,
 // so usage and billing stay on RapidAPI plans (free BASIC 100/day, PRO, ULTRA).
 const TOOLS = /*__TOOLS__*/[];
-const SERVER = { name: 'de-opendata-mcp', version: '0.1.0' };
+const SERVER = { name: 'de-opendata-mcp', version: '0.2.0' };
 const PROTOCOLS = ['2025-06-18', '2025-03-26', '2024-11-05'];
 const CORS = {
   'Access-Control-Allow-Origin': '*',
@@ -69,7 +69,7 @@ async function handleRpc(msg, key) {
         protocolVersion: PROTOCOLS.includes(want) ? want : PROTOCOLS[0],
         capabilities: { tools: { listChanged: false } },
         serverInfo: SERVER,
-        instructions: 'German open data for agents: public procurement notices (oeffentlichevergabe.de) and MaStR energy units (Bundesnetzagentur). Tool calls need your RapidAPI key header (free plan available).',
+        instructions: 'German open data for agents: public procurement notices (oeffentlichevergabe.de), MaStR energy units and EV charging stations (Ladesäulenregister, Bundesnetzagentur). Tool calls need your RapidAPI key header (free plan available).',
       });
     }
     case 'ping': return ok({});
@@ -85,14 +85,15 @@ async function handleRpc(msg, key) {
 }
 
 const LANDING = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>DE Open Data MCP — German tenders + MaStR energy units for AI agents</title>
+<title>DE Open Data MCP — German tenders, MaStR energy units + EV charging stations for AI agents</title>
 <style>body{font:16px/1.55 system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 16px;color:#111}code,pre{background:#f4f4f5;border-radius:6px}pre{padding:12px;overflow:auto}code{padding:1px 4px}</style></head><body>
 <h1>DE Open Data MCP</h1>
-<p>A remote MCP server that gives Cursor, Claude and other AI agents search over two German open-data sources:</p>
+<p>A remote MCP server that gives Cursor, Claude and other AI agents search over three German open-data sources:</p>
 <ul><li><b>Public procurement notices</b> from oeffentlichevergabe.de (CC0): filter by keyword, CPV, Bundesland, value, deadline.</li>
-<li><b>MaStR energy units</b> from the Marktstammdatenregister (DL-DE-BY-2.0, © Bundesnetzagentur): solar, wind, storage and more by PLZ, type, capacity.</li></ul>
+<li><b>MaStR energy units</b> from the Marktstammdatenregister (DL-DE-BY-2.0, © Bundesnetzagentur): solar, wind, storage and more by PLZ, type, capacity.</li>
+<li><b>EV charging stations</b> from the Ladesäulenregister (CC BY 4.0, Bundesnetzagentur.de): by PLZ, Bundesland, kW, plug type, operator, radius.</li></ul>
 <h2>Install</h2>
-<p>1. Get a RapidAPI key and subscribe (free BASIC plan, 100 requests/day) to <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query">DE Tender Query</a> and/or <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units">DE MaStR Units</a>.</p>
+<p>1. Get a RapidAPI key and subscribe (free BASIC plan, 100 requests/day) to <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query">DE Tender Query</a> <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units">DE MaStR Units</a> and/or <a href="https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query">DE Ladesäulen Query</a>.</p>
 <p>2. Add to your MCP config (Cursor <code>~/.cursor/mcp.json</code>, Claude Desktop, etc.):</p>
 <pre>{
   "mcpServers": {
