@@ -1,6 +1,8 @@
-# DE Open Data MCP
+# MRVN DE Open Data MCP
 
-<!-- mcp-name: io.github.MarvinSMX/de-opendata-mcp -->
+By **MRVN**.
+
+<!-- mcp-name: io.github.MarvinSMX/mrvn-de-opendata-mcp -->
 
 Remote MCP server (Streamable HTTP, stateless) giving AI agents access to German open data:
 
@@ -22,8 +24,8 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 | `mastr_health` | Data freshness / health |
 
 `tools/list` works without a key. Tool calls require **your own RapidAPI key**, subscribed to
-[DE Tender Query](https://rapidapi.com/MarvinGaming/api/de-tender-query) and/or
-[DE MaStR Units](https://rapidapi.com/MarvinGaming/api/de-mastr-units). Each has a free BASIC plan (100 requests/day); paid plans exist for higher volume. Your key is forwarded only to the RapidAPI gateway and is not stored.
+[DE Tender Query][tender] and/or
+[DE MaStR Units][mastr]. Each has a free BASIC plan (100 requests/day); paid plans exist for higher volume. Your key is forwarded only to the RapidAPI gateway and is not stored.
 
 ## Config
 ```json
@@ -46,3 +48,7 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 - Code: MIT (see `LICENSE`).
 - Procurement data: oeffentlichevergabe.de, published under CC0 1.0.
 - MaStR data: © Bundesnetzagentur, Marktstammdatenregister, Datenlizenz Deutschland – Namensnennung – Version 2.0 (dl-de/by-2-0), www.marktstammdatenregister.de. Data may be processed/filtered; no affiliation with or endorsement by the publishers.
+
+<!-- RapidAPI listing URLs: single place to update in this README (also build-tools.mjs, worker.src.js, smoke.mjs) -->
+[tender]: https://rapidapi.com/MarvinGaming/api/de-tender-query
+[mastr]: https://rapidapi.com/MarvinGaming/api/de-mastr-units
