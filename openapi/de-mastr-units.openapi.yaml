@@ -1,0 +1,289 @@
+openapi: 3.0.3
+info:
+  title: MRVN DE MaStR Units API
+  version: 0.1.0
+  description: 'Search and filter German energy generation and storage units from
+    the
+
+    Marktstammdatenregister (MaStR), operated by the Bundesnetzagentur.
+
+    Official open data is published as large XML ZIP dumps (Gesamtdatenexport)
+
+    and a public JSON list endpoint; this API normalizes them into filterable JSON
+
+    by PLZ, Energieträger/type, Betriebsstatus, capacity (kW), Bundesland and keyword.
+
+
+    Data license: Datenlizenz Deutschland – Namensnennung – Version 2.0 (DL-DE-BY-2.0).
+
+    Attribution required: © Bundesnetzagentur – Marktstammdatenregister (MaStR).
+
+    Independent project, not an official Bundesnetzagentur service.
+
+    '
+  contact:
+    name: MRVN
+    url: https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units
+  license:
+    name: Datenlizenz Deutschland – Namensnennung – Version 2.0 (DL-DE-BY-2.0)
+    url: https://www.govdata.de/dl-de/by-2-0
+  x-apisguru-categories:
+  - open_data
+servers:
+- url: https://de-mastr-units.p.rapidapi.com
+  description: RapidAPI gateway (requires X-RapidAPI-Key)
+paths:
+  /v1/units:
+    get:
+      operationId: searchUnits
+      summary: Search MaStR energy units
+      description: Returns units sorted by capacity (or updated / inbetriebnahme /
+        name). Combine filters freely.
+      parameters:
+      - name: plz
+        in: query
+        schema:
+          type: string
+        description: Exact PLZ or prefix
+        example: '48147'
+      - name: type
+        in: query
+        schema:
+          type: string
+        description: Comma-separated type slugs (solar, wind, biomass, storage, hydro,
+          gas, …) or substrings of Energieträger label
+        example: solar,wind
+      - name: einheitentyp
+        in: query
+        schema:
+          type: string
+        description: Comma-separated numeric Einheitentyp codes from MaStR
+      - name: status
+        in: query
+        schema:
+          type: string
+        description: Comma-separated Betriebsstatus substrings, e.g. In Betrieb, In
+          Planung, stillgelegt
+        example: In Betrieb
+      - name: min_kw
+        in: query
+        schema:
+          type: number
+        description: Minimum Bruttoleistung in kW
+      - name: max_kw
+        in: query
+        schema:
+          type: number
+        description: Maximum Bruttoleistung in kW
+      - name: land
+        in: query
+        schema:
+          type: string
+        description: 'Comma-separated Bundesland codes: BW,BY,BE,BB,HB,HH,HE,MV,NI,NW,RP,SL,SN,ST,SH,TH,AWZ'
+        example: BY,NW
+      - name: q
+        in: query
+        schema:
+          type: string
+        description: Keywords (all must match) on name, operator, Ort, grid operator,
+          type label, mastr_id
+        example: Photovoltaik
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum:
+          - capacity
+          - updated
+          - inbetriebnahme
+          - name
+          default: capacity
+      - name: fields
+        in: query
+        schema:
+          type: string
+          enum:
+          - full
+          - compact
+          default: full
+        description: compact returns a slim list for agents and UIs
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      responses:
+        '200':
+          description: Matching units
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+                  record_count:
+                    type: integer
+                  updated_at:
+                    type: string
+                    format: date-time
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Unit'
+                  attribution:
+                    type: string
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Marketplace proxy secret required
+  /v1/units/{mastr_id}:
+    get:
+      operationId: getUnit
+      summary: Get one unit by MaStR number
+      parameters:
+      - name: mastr_id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: SEE984033548619
+      responses:
+        '200':
+          description: The unit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unit'
+        '404':
+          description: Not in the current snapshot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/stats:
+    get:
+      operationId: getStats
+      summary: Counts by type, status and Bundesland
+      responses:
+        '200':
+          description: Aggregates over the current snapshot
+  /v1/health:
+    get:
+      operationId: health
+      summary: Service status, record count and data freshness
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    Unit:
+      type: object
+      properties:
+        mastr_id:
+          type: string
+          description: MaStR Einheit number (e.g. SEE…)
+        type:
+          type: string
+          description: Normalized Energieträger slug
+        type_label:
+          type: string
+          nullable: true
+          description: Original Energieträger name
+        einheitentyp:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        status_id:
+          type: integer
+          nullable: true
+        capacity_kw:
+          type: number
+          nullable: true
+          description: Bruttoleistung in kW
+        net_capacity_kw:
+          type: number
+          nullable: true
+        plz:
+          type: string
+          nullable: true
+        ort:
+          type: string
+          nullable: true
+        land:
+          type: string
+          nullable: true
+          description: Bundesland code
+        land_label:
+          type: string
+          nullable: true
+        lat:
+          type: number
+          nullable: true
+        lon:
+          type: number
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        operator:
+          type: string
+          nullable: true
+        operator_mastr_id:
+          type: string
+          nullable: true
+        grid_operator:
+          type: string
+          nullable: true
+        inbetriebnahme:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        registered_at:
+          type: string
+          format: date-time
+          nullable: true
+        source_url:
+          type: string
+          nullable: true
+        attribution:
+          type: string
+  securitySchemes:
+    RapidAPIKey:
+      type: apiKey
+      in: header
+      name: X-RapidAPI-Key
+externalDocs:
+  description: RapidAPI listing (free BASIC plan)
+  url: https://rapidapi.com/mrvn-mrvn-default/api/de-mastr-units
+security:
+- RapidAPIKey: []

@@ -1,0 +1,176 @@
+openapi: 3.0.3
+info:
+  title: MRVN DE Ladesäulen Query API
+  version: 0.1.0
+  description: 'Filterable REST API over the Bundesnetzagentur Ladesäulenregister
+    — all publicly reported EV charging stations in Germany (~117k stations). Filter
+    by PLZ, Bundesland, power (kW), fast/normal, plug type (CCS, CHAdeMO, Typ 2, MCS),
+    operator, payment method, radius around a point, or bounding box; get aggregates
+    by Land, kW bucket, plug and operator. Data: Bundesnetzagentur.de, CC BY 4.0,
+    reformatted. Not an official service.'
+  contact:
+    name: MRVN
+    url: https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query
+  x-apisguru-categories:
+  - open_data
+servers:
+- url: https://de-ladesaulen-query.p.rapidapi.com
+  description: RapidAPI gateway (requires X-RapidAPI-Key)
+paths:
+  /v1/health:
+    get:
+      summary: Snapshot status (station count, data date, license)
+      responses:
+        '200':
+          description: OK
+  /v1/stations:
+    get:
+      summary: Search charging stations
+      parameters:
+      - name: plz
+        in: query
+        schema:
+          type: string
+        description: PLZ or prefix, e.g. 10115 or 80
+      - name: land
+        in: query
+        schema:
+          type: string
+        description: Comma list of Bundesland codes (BW,BY,BE,BB,HB,HH,HE,MV,NI,NW,RP,SL,SN,ST,SH,TH)
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - fast
+          - normal
+      - name: min_kw
+        in: query
+        schema:
+          type: number
+      - name: max_kw
+        in: query
+        schema:
+          type: number
+      - name: plug
+        in: query
+        schema:
+          type: string
+        description: Substring match on plug type, e.g. ccs, chademo, typ 2, mcs
+      - name: payment
+        in: query
+        schema:
+          type: string
+        description: Substring match, e.g. kreditkarte, plug & charge, kostenlos
+      - name: operator
+        in: query
+        schema:
+          type: string
+        description: Operator name substring, e.g. ionity, tesla, enbw
+      - name: ort
+        in: query
+        schema:
+          type: string
+        description: City name (prefix match)
+      - name: q
+        in: query
+        schema:
+          type: string
+        description: Free text over operator, name, city, street, PLZ, Kreis
+      - name: open_24_7
+        in: query
+        schema:
+          type: boolean
+      - name: commissioned_after
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: lat
+        in: query
+        schema:
+          type: number
+        description: Radius search center (with lon)
+      - name: lon
+        in: query
+        schema:
+          type: number
+      - name: radius_km
+        in: query
+        schema:
+          type: number
+          default: 5
+          maximum: 100
+      - name: bbox
+        in: query
+        schema:
+          type: string
+        description: minLon,minLat,maxLon,maxLat
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum:
+          - power
+          - commissioned
+          - points
+          - distance
+      - name: fields
+        in: query
+        schema:
+          type: string
+          enum:
+          - compact
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 25
+          minimum: 1
+          maximum: 100
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          default: 0
+      responses:
+        '200':
+          description: Matching stations
+        '400':
+          description: Bad parameter
+  /v1/stations/{id}:
+    get:
+      summary: One station by Ladeeinrichtungs-ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Station
+        '404':
+          description: Not found
+  /v1/stats:
+    get:
+      summary: Aggregates by Land, kW bucket, plug type and top operators
+      parameters:
+      - name: land
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Aggregates
+externalDocs:
+  description: RapidAPI listing (free BASIC plan)
+  url: https://rapidapi.com/mrvn-mrvn-default/api/de-ladesaulen-query
+components:
+  securitySchemes:
+    RapidAPIKey:
+      type: apiKey
+      in: header
+      name: X-RapidAPI-Key
+security:
+- RapidAPIKey: []

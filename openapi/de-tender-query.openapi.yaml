@@ -1,0 +1,388 @@
+openapi: 3.0.3
+info:
+  title: MRVN DE Tender Query API
+  version: 0.1.0
+  description: 'Search and filter German public procurement notices (tenders, awards,
+    prior information)
+
+    published on the federal Bekanntmachungsservice (oeffentlichevergabe.de).
+
+    The official Open Data service only offers bulk day/month ZIP dumps. This API
+    turns them into
+
+    a filterable JSON endpoint: by CPV code, Bundesland, keyword, buyer, postal code,
+    value and date.
+
+    Built for bid-matching tools, agencies, sales teams and AI agents.
+
+    Data: Bekanntmachungsservice Open Data, CC0 1.0. Not an official service.
+
+    '
+  contact:
+    name: MRVN
+    url: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
+  x-apisguru-categories:
+  - open_data
+servers:
+- url: https://de-tender-query.p.rapidapi.com
+  description: RapidAPI gateway (requires X-RapidAPI-Key)
+paths:
+  /v1/notices:
+    get:
+      operationId: searchNotices
+      summary: Search German public procurement notices
+      description: Returns notices newest first (or by value). Combine filters freely.
+      parameters:
+      - name: q
+        in: query
+        schema:
+          type: string
+        description: Keywords (all must match) in title, description, lots, buyer,
+          CPV labels. Accents ignored.
+        example: reinigung
+      - name: cpv
+        in: query
+        schema:
+          type: string
+        description: Comma-separated CPV codes or prefixes, e.g. 72 (IT services)
+          or 45430000. Trailing zeros are treated as a prefix.
+        example: '72000000'
+      - name: land
+        in: query
+        schema:
+          type: string
+        description: 'Comma-separated Bundesland codes: BW,BY,BE,BB,HB,HH,HE,MV,NI,NW,RP,SL,SN,ST,SH,TH'
+        example: BY,BW
+      - name: type
+        in: query
+        schema:
+          type: string
+          enum:
+          - tender
+          - award
+          - planning
+      - name: category
+        in: query
+        schema:
+          type: string
+          enum:
+          - works
+          - services
+          - goods
+      - name: buyer
+        in: query
+        schema:
+          type: string
+        description: Substring of the contracting authority name
+        example: München
+      - name: postal_prefix
+        in: query
+        schema:
+          type: string
+        description: Postal code prefix of buyer or delivery place
+        example: '80'
+      - name: min_value
+        in: query
+        schema:
+          type: number
+        description: Minimum estimated or awarded value in EUR (only notices that
+          state a value)
+      - name: max_value
+        in: query
+        schema:
+          type: number
+      - name: from
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Published on or after (ISO date)
+      - name: to
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Published on or before (ISO date)
+      - name: end_after
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Submission deadline (tender_end) on or after. Notices without
+          a deadline are excluded when this or end_before is set.
+        example: '2026-10-16'
+      - name: end_before
+        in: query
+        schema:
+          type: string
+          format: date
+        description: Submission deadline (tender_end) on or before. Sourced from ocds2
+          lot tenderPeriod.endDate.
+        example: '2026-12-31'
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum:
+          - date
+          - value
+          default: date
+      - name: fields
+        in: query
+        schema:
+          type: string
+          enum:
+          - full
+          - compact
+          default: full
+        description: compact returns a slim list for agents and UIs
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 25
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+      responses:
+        '200':
+          description: Matching notices
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  limit:
+                    type: integer
+                  offset:
+                    type: integer
+                  data_window:
+                    $ref: '#/components/schemas/Window'
+                  updated_at:
+                    type: string
+                    format: date-time
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notice'
+                  attribution:
+                    type: string
+        '400':
+          description: Invalid parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/notices/{id}:
+    get:
+      operationId: getNotice
+      summary: Get one notice by notice id or OCID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 00e52ede-ea6c-461b-a964-e77e2e5f4a26
+      responses:
+        '200':
+          description: The notice
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notice'
+        '404':
+          description: Not in the current data window
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /v1/stats:
+    get:
+      operationId: getStats
+      summary: Counts by type, category, Bundesland and CPV division
+      responses:
+        '200':
+          description: Aggregates over the current data window
+  /v1/health:
+    get:
+      operationId: health
+      summary: Service status and data freshness
+      responses:
+        '200':
+          description: OK
+components:
+  schemas:
+    Window:
+      type: object
+      properties:
+        from:
+          type: string
+          format: date-time
+        to:
+          type: string
+          format: date-time
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    Money:
+      type: object
+      nullable: true
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+    Notice:
+      type: object
+      properties:
+        id:
+          type: string
+        ocid:
+          type: string
+        type:
+          type: string
+          enum:
+          - tender
+          - award
+          - planning
+        published_at:
+          type: string
+          format: date-time
+        tender_end:
+          type: string
+          format: date-time
+          nullable: true
+          description: Earliest submission deadline (lots[].tenderPeriod.endDate from
+            ocds2). Null when upstream OCDS 1.1-only export has no period.
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+          nullable: true
+        procedure:
+          type: string
+          nullable: true
+        cpv:
+          type: array
+          items:
+            type: string
+        cpv_labels:
+          type: object
+          additionalProperties:
+            type: string
+        land:
+          type: string
+          nullable: true
+          description: Bundesland code
+        nuts:
+          type: string
+          nullable: true
+        buyer:
+          type: object
+          properties:
+            name:
+              type: string
+            city:
+              type: string
+              nullable: true
+            postal_code:
+              type: string
+              nullable: true
+            email:
+              type: string
+              nullable: true
+            url:
+              type: string
+              nullable: true
+        delivery_places:
+          type: array
+          items:
+            type: string
+        value_eur:
+          type: number
+          nullable: true
+        value:
+          $ref: '#/components/schemas/Money'
+        lots:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              value:
+                $ref: '#/components/schemas/Money'
+              contract_start:
+                type: string
+                nullable: true
+              contract_end:
+                type: string
+                nullable: true
+              duration_days:
+                type: integer
+                nullable: true
+              submission_end:
+                type: string
+                format: date-time
+                nullable: true
+                description: Lot submission deadline (tenderPeriod.endDate)
+        awards:
+          type: array
+          items:
+            type: object
+            properties:
+              lot:
+                type: string
+              date:
+                type: string
+                nullable: true
+              status:
+                type: string
+                nullable: true
+              value:
+                $ref: '#/components/schemas/Money'
+              suppliers:
+                type: array
+                items:
+                  type: string
+        documents_url:
+          type: string
+          nullable: true
+          description: Link to tender documents on the e-procurement platform
+        amendments:
+          type: array
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              rationale:
+                type: string
+        source_url:
+          type: string
+  securitySchemes:
+    RapidAPIKey:
+      type: apiKey
+      in: header
+      name: X-RapidAPI-Key
+externalDocs:
+  description: RapidAPI listing (free BASIC plan)
+  url: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
+security:
+- RapidAPIKey: []

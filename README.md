@@ -49,6 +49,12 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 ## Source
 `worker.src.js` is the Cloudflare Pages worker (JSON-RPC over POST `/mcp`, protocol versions 2025-06-18 / 2025-03-26 / 2024-11-05). `build-tools.mjs` injects tool definitions (`tools.generated.json`); `smoke.mjs` runs a smoke test against a URL.
 
+## OpenAPI specs (REST via RapidAPI)
+The three backing REST APIs are described in `openapi/` (OpenAPI 3.0.3, server = RapidAPI gateway, header `X-RapidAPI-Key`):
+- `openapi/de-tender-query.openapi.yaml`: German public procurement notices
+- `openapi/de-mastr-units.openapi.yaml`: MaStR energy units
+- `openapi/de-ladesaulen-query.openapi.yaml`: EV charging stations (Ladesäulenregister)
+
 ## License & data attribution
 - Code: MIT (see `LICENSE`).
 - Procurement data: oeffentlichevergabe.de, published under CC0 1.0.
