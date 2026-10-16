@@ -53,7 +53,7 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 - Code: MIT (see `LICENSE`).
 - Procurement data: oeffentlichevergabe.de, published under CC0 1.0.
 - EV charging station data: Bundesnetzagentur.de, Ladesäulenregister, CC BY 4.0; reformatted.
-- MaStR data: © Bundesnetzagentur, Marktstammdatenregister, Datenlizenz Deutschland – Namensnennung – Version 2.0 (dl-de/by-2-0), www.marktstammdatenregister.de. Data may be processed/filtered; no affiliation with or endorsement by the publishers.
+- MaStR data: © Bundesnetzagentur – Marktstammdatenregister (MaStR), https://www.marktstammdatenregister.de/MaStR/Datendownload. License: Datenlizenz Deutschland – Namensnennung – Version 2.0 (dl-de/by-2-0), https://www.govdata.de/dl-de/by-2-0. Data modified (normalized). Not an official service.
 
 <!-- RapidAPI listing URLs: single place to update in this README (also build-tools.mjs, worker.src.js, smoke.mjs) -->
 [tender]: https://rapidapi.com/mrvn-mrvn-default/api/de-tender-query
