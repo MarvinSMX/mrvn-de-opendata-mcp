@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.MarvinSMX/de-opendata-mcp",
+  "title": "DE Open Data MCP",
+  "description": "German public tenders (oeffentlichevergabe.de) and MaStR energy units via RapidAPI key.",
+  "repository": { "url": "https://github.com/MarvinSMX/de-opendata-mcp", "source": "github" },
+  "websiteUrl": "https://de-opendata-mcp.pages.dev/",
+  "version": "0.1.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://de-opendata-mcp.pages.dev/mcp",
+      "headers": [
+        { "name": "X-RapidAPI-Key", "description": "Your RapidAPI key (free BASIC plan: 100 requests/day per API)", "isRequired": true, "isSecret": true }
+      ]
+    }
+  ]
+}

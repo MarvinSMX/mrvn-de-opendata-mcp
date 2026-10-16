@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "de-opendata": {
+      "type": "http",
+      "url": "https://de-opendata-mcp.pages.dev/mcp",
+      "headers": { "X-RapidAPI-Key": "YOUR_RAPIDAPI_KEY" }
+    }
+  }
+}
