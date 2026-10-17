@@ -1,5 +1,7 @@
 # MRVN DE Open Data MCP
 
+<img src="assets/logo-400.png" alt="MRVN DE Open Data" width="120" height="120">
+
 By **MRVN**.
 
 <!-- mcp-name: io.github.MarvinSMX/mrvn-de-opendata-mcp -->
@@ -45,6 +47,8 @@ Endpoint: `https://de-opendata-mcp.pages.dev/mcp` · Landing page: https://de-op
 }
 ```
 `Authorization: Bearer <key>` is also accepted.
+
+Step-by-step setup for Cline, Cursor, Claude Code and Claude Desktop (incl. the `mcp-remote` stdio bridge / `Dockerfile` for clients without remote support): see [`llms-install.md`](llms-install.md).
 
 ## Source
 `worker.src.js` is the Cloudflare Pages worker (JSON-RPC over POST `/mcp`, protocol versions 2025-06-18 / 2025-03-26 / 2024-11-05). `build-tools.mjs` injects tool definitions (`tools.generated.json`); `smoke.mjs` runs a smoke test against a URL.
